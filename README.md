@@ -7,6 +7,19 @@ Mesmas funções do app de TV: listas M3U e Xtream Codes, guia EPG (XMLTV ou `ge
 favoritos, filmes e séries, recentes com "continuar de onde parou" e reconexão automática
 quando o servidor trava.
 
+## Baixar
+
+1. Baixe o **Telvo-1.0.dmg** na página de [Releases](https://github.com/webdevpls/telvo-mac/releases/latest).
+2. Abra o `.dmg` e arraste o **Telvo** para a pasta **Aplicativos**.
+3. Na primeira vez, o macOS avisa que não consegue verificar o desenvolvedor (o app não é
+   assinado com conta paga da Apple). Para liberar, uma vez só:
+   - tente abrir o Telvo e feche o aviso;
+   - vá em **Ajustes do Sistema → Privacidade e Segurança**, role até o fim e clique em **Abrir mesmo assim**.
+
+   Ou, pelo Terminal: `xattr -dr com.apple.quarantine /Applications/Telvo.app`
+
+Funciona em Macs com Apple Silicon e Intel, macOS 14 ou mais novo.
+
 ## Build
 
 Requisitos: macOS 14+, Xcode 16+ e [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
