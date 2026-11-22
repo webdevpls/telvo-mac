@@ -15,6 +15,24 @@ struct VodBrowser: View {
 
         VStack(spacing: 0) {
             TopBar(title: vm.section.rawValue, subtitle: vm.current?.name) {
+                // Mesmo papel da gaveta de categorias (←) da versão de TV.
+                Menu {
+                    Button("Todas (fileiras)") { vm.vodCategory = nil; vm.vodQuery = "" }
+                    Divider()
+                    let counts = vm.vodCounts()
+                    ForEach(categories) { c in
+                        Button("\(shortCategory(c.name))  (\(counts[c.id] ?? 0))") { vm.vodQuery = ""; vm.vodCategory = c.id }
+                    }
+                } label: {
+                    Label(category.map { shortCategory($0.name) } ?? "Categorias", systemImage: "line.3.horizontal.decrease")
+                        .font(.system(size: 12.5, weight: .semibold))
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+                .padding(.horizontal, 12)
+                .frame(height: 30)
+                .background(Capsule().fill(C.widgetHeader))
+                .overlay(Capsule().strokeBorder(C.separator))
                 SearchField(placeholder: "Buscar \(noun)", text: $vm.vodQuery).frame(width: 260)
             }
             if vm.vodLoading && all.isEmpty {
