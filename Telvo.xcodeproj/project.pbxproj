@@ -1,0 +1,425 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		150D0B8C06B95F69D7D01631 /* VodViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D04F32687C5C10D3111A7B31 /* VodViews.swift */; };
+		236AA2FE847B27716CF0D5AB /* VLCKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6E136E6821622A5EF850918 /* VLCKit.xcframework */; };
+		38D5280B78EC050AC0E69249 /* EPG.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67201DE7BE2774D239D6FA80 /* EPG.swift */; };
+		48CB2BC5648CD34268861D7E /* Xtream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E278463CC5DC09AD06F7554 /* Xtream.swift */; };
+		5036378C0BB6A9467A794D52 /* VLCKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6E136E6821622A5EF850918 /* VLCKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5211E9DA8E9EAE3FC5856E2B /* LiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61432AB37E67E785C9E0A6CC /* LiveView.swift */; };
+		5967D75DE2E70DE620B0381F /* PlayerControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1B4CAE8CD49DBB7A41A48E /* PlayerControls.swift */; };
+		5B6599183BAB93379B1EBF3D /* M3U.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A3D0D67EE2111779A306BA /* M3U.swift */; };
+		61B073B4352C9F7890F5A1D6 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCC71DE95F73AA4CAFE098B /* AppModel.swift */; };
+		6226088BD111832DE2C1C92A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E58A4B030DE4FACEAFE7C45 /* Model.swift */; };
+		77A6AE8F4B430B95276A770E /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA953A950B15F64EE343CAF /* VideoPlayer.swift */; };
+		9D1A750A9483591298C21FAC /* TelvoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF15BA1D2A5C07AD4A1C17 /* TelvoApp.swift */; };
+		A466CBEFBF812F9B288346D4 /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6548C506F6D64ACFF9F79C78 /* Http.swift */; };
+		C096FFB14BC6EB1E64E8B2CB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325834A2CF56D3030E709392 /* Theme.swift */; };
+		C6902ABEF4E334AB8A77B0A8 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = D768851FEB908E52E5B2AA0B /* Store.swift */; };
+		E41479070C62398C0440A740 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC515B709B58BF65E7D92131 /* HomeView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		90B7024E7757D71375754F98 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5036378C0BB6A9467A794D52 /* VLCKit.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0E1D752883DC7118B4E298AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0E58A4B030DE4FACEAFE7C45 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		1FCC71DE95F73AA4CAFE098B /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		2BAF15BA1D2A5C07AD4A1C17 /* TelvoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelvoApp.swift; sourceTree = "<group>"; };
+		325834A2CF56D3030E709392 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		3E278463CC5DC09AD06F7554 /* Xtream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Xtream.swift; sourceTree = "<group>"; };
+		55A3D0D67EE2111779A306BA /* M3U.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = M3U.swift; sourceTree = "<group>"; };
+		5DA953A950B15F64EE343CAF /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		61432AB37E67E785C9E0A6CC /* LiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveView.swift; sourceTree = "<group>"; };
+		6548C506F6D64ACFF9F79C78 /* Http.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
+		67201DE7BE2774D239D6FA80 /* EPG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPG.swift; sourceTree = "<group>"; };
+		6814A955F0364FC0573C82FC /* Telvo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Telvo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD1B4CAE8CD49DBB7A41A48E /* PlayerControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControls.swift; sourceTree = "<group>"; };
+		D04F32687C5C10D3111A7B31 /* VodViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VodViews.swift; sourceTree = "<group>"; };
+		D768851FEB908E52E5B2AA0B /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		DC515B709B58BF65E7D92131 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F6E136E6821622A5EF850918 /* VLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = VLCKit.xcframework; path = Vendor/VLCKit.xcframework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3ED942795757397109639C60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				236AA2FE847B27716CF0D5AB /* VLCKit.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		991BB95D88AE04EEA249D9A4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F6E136E6821622A5EF850918 /* VLCKit.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A5AA877A37B1B6070F2059B8 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				67201DE7BE2774D239D6FA80 /* EPG.swift */,
+				6548C506F6D64ACFF9F79C78 /* Http.swift */,
+				55A3D0D67EE2111779A306BA /* M3U.swift */,
+				0E58A4B030DE4FACEAFE7C45 /* Model.swift */,
+				D768851FEB908E52E5B2AA0B /* Store.swift */,
+				3E278463CC5DC09AD06F7554 /* Xtream.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		B40EA6CC3837A7646846B297 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				CD1B4CAE8CD49DBB7A41A48E /* PlayerControls.swift */,
+				5DA953A950B15F64EE343CAF /* VideoPlayer.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		C09A5C9AB1A2340395C69410 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6814A955F0364FC0573C82FC /* Telvo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C5FAE0A941BBE0E56FF213CF = {
+			isa = PBXGroup;
+			children = (
+				D17CEC701886D69AA319F8E8 /* Telvo */,
+				991BB95D88AE04EEA249D9A4 /* Frameworks */,
+				C09A5C9AB1A2340395C69410 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D17CEC701886D69AA319F8E8 /* Telvo */ = {
+			isa = PBXGroup;
+			children = (
+				0E1D752883DC7118B4E298AD /* Info.plist */,
+				E31F36910436D9DADB8F1458 /* App */,
+				A5AA877A37B1B6070F2059B8 /* Data */,
+				B40EA6CC3837A7646846B297 /* Player */,
+				D34360C470E7C435891CCC50 /* Views */,
+			);
+			path = Telvo;
+			sourceTree = "<group>";
+		};
+		D34360C470E7C435891CCC50 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DC515B709B58BF65E7D92131 /* HomeView.swift */,
+				61432AB37E67E785C9E0A6CC /* LiveView.swift */,
+				325834A2CF56D3030E709392 /* Theme.swift */,
+				D04F32687C5C10D3111A7B31 /* VodViews.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E31F36910436D9DADB8F1458 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				1FCC71DE95F73AA4CAFE098B /* AppModel.swift */,
+				2BAF15BA1D2A5C07AD4A1C17 /* TelvoApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		461532AD18642DE8BC290E85 /* Telvo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91561485AB99D5B9743DA2C9 /* Build configuration list for PBXNativeTarget "Telvo" */;
+			buildPhases = (
+				C62B6E0CA0A9732A5040081D /* Sources */,
+				3ED942795757397109639C60 /* Frameworks */,
+				90B7024E7757D71375754F98 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Telvo;
+			packageProductDependencies = (
+			);
+			productName = Telvo;
+			productReference = 6814A955F0364FC0573C82FC /* Telvo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		84738FF26515C5BAE8B3A13D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					461532AD18642DE8BC290E85 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 761A3A7E49663AA604D0810F /* Build configuration list for PBXProject "Telvo" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C5FAE0A941BBE0E56FF213CF;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C09A5C9AB1A2340395C69410 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				461532AD18642DE8BC290E85 /* Telvo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C62B6E0CA0A9732A5040081D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61B073B4352C9F7890F5A1D6 /* AppModel.swift in Sources */,
+				38D5280B78EC050AC0E69249 /* EPG.swift in Sources */,
+				E41479070C62398C0440A740 /* HomeView.swift in Sources */,
+				A466CBEFBF812F9B288346D4 /* Http.swift in Sources */,
+				5211E9DA8E9EAE3FC5856E2B /* LiveView.swift in Sources */,
+				5B6599183BAB93379B1EBF3D /* M3U.swift in Sources */,
+				6226088BD111832DE2C1C92A /* Model.swift in Sources */,
+				5967D75DE2E70DE620B0381F /* PlayerControls.swift in Sources */,
+				C6902ABEF4E334AB8A77B0A8 /* Store.swift in Sources */,
+				9D1A750A9483591298C21FAC /* TelvoApp.swift in Sources */,
+				C096FFB14BC6EB1E64E8B2CB /* Theme.swift in Sources */,
+				77A6AE8F4B430B95276A770E /* VideoPlayer.swift in Sources */,
+				150D0B8C06B95F69D7D01631 /* VodViews.swift in Sources */,
+				48CB2BC5648CD34268861D7E /* Xtream.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0D7CDCC4E0B5845A68DAE808 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Vendor\"",
+				);
+				INFOPLIST_FILE = Telvo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.neri.telvo;
+				PRODUCT_NAME = Telvo;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2C6030F69B741DFCD2BB6995 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		3EBB1EE1BFBBB154F0724708 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Vendor\"",
+				);
+				INFOPLIST_FILE = Telvo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.neri.telvo;
+				PRODUCT_NAME = Telvo;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		AAB46DE2438B3BEE17ACD857 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		761A3A7E49663AA604D0810F /* Build configuration list for PBXProject "Telvo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AAB46DE2438B3BEE17ACD857 /* Debug */,
+				2C6030F69B741DFCD2BB6995 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		91561485AB99D5B9743DA2C9 /* Build configuration list for PBXNativeTarget "Telvo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EBB1EE1BFBBB154F0724708 /* Debug */,
+				0D7CDCC4E0B5845A68DAE808 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 84738FF26515C5BAE8B3A13D /* Project object */;
+}
