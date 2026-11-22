@@ -16,49 +16,204 @@ private let dateTimeFormatter: DateFormatter = {
 
 private func date(_ ms: Int64) -> Date { Date(timeIntervalSince1970: Double(ms) / 1000) }
 
-struct HomeView: View {
+/// Barra do topo de todas as telas internas: ← Início, título e (opcional) busca.
+struct TopBar<Trailing: View>: View {
+    @Environment(AppModel.self) private var vm
+    let title: String
+    var subtitle: String? = nil
+    var showBack = true
+    @ViewBuilder var trailing: () -> Trailing
+
+    var body: some View {
+        HStack(spacing: 16) {
+            if showBack {
+                Pill(horizontalPadding: 12, action: vm.goHome) {
+                    Image(systemName: "chevron.left")
+                    Text("Início")
+                }
+            }
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title).font(.system(size: 20, weight: .semibold)).foregroundStyle(C.heading).lineLimit(1)
+                if let subtitle { Text(subtitle).font(.tSubtitle).foregroundStyle(C.body).lineLimit(1) }
+            }
+            Spacer(minLength: 12)
+            StatusLine()
+            trailing()
+        }
+        .padding(.leading, 24)
+        .padding(.trailing, 24)
+        .padding(.top, 28)
+        .padding(.bottom, 14)
+        .background(C.rail)
+    }
+}
+
+extension TopBar where Trailing == EmptyView {
+    init(title: String, subtitle: String? = nil, showBack: Bool = true) {
+        self.init(title: title, subtitle: subtitle, showBack: showBack) { EmptyView() }
+    }
+}
+
+// MARK: - Início
+
+struct HubView: View {
+    @Environment(AppModel.self) private var vm
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 14) {
+                AppMark(size: 40)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Telvo").font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading)
+                    Text(vm.current?.name ?? "").font(.tSubtitle).foregroundStyle(C.body)
+                }
+                Spacer()
+                StatusLine()
+            }
+            .padding(.horizontal, 48)
+            .padding(.top, 36)
+
+            Spacer(minLength: 24)
+
+            HStack(spacing: 20) {
+                HubCard(title: "TV", subtitle: "\(vm.channels.count) canais ao vivo", icon: "tv", tint: C.selection) {
+                    vm.openSection(.live)
+                }
+                .keyboardShortcut("1", modifiers: [])
+                HubCard(title: "Séries", subtitle: vm.seriesList.isEmpty ? "Temporadas e episódios" : "\(vm.seriesList.count) séries",
+                        icon: "rectangle.stack", tint: Color(hex: 0xC084FC)) { vm.openSection(.series) }
+                    .keyboardShortcut("2", modifiers: [])
+                    .disabled(!vm.hasVod)
+                HubCard(title: "Filmes", subtitle: vm.movies.isEmpty ? "Catálogo completo" : "\(vm.movies.count) filmes",
+                        icon: "film", tint: Color(hex: 0xFBBF24)) { vm.openSection(.movies) }
+                    .keyboardShortcut("3", modifiers: [])
+                    .disabled(!vm.hasVod)
+                HubCard(title: "Configurações", subtitle: "Listas e conta", icon: "gearshape", tint: C.body) {
+                    vm.openSettings()
+                }
+                .keyboardShortcut("4", modifiers: [])
+            }
+            .padding(.horizontal, 48)
+
+            if !vm.recents.isEmpty {
+                ContinueRow().padding(.top, 36)
+            }
+
+            Spacer(minLength: 24)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(C.shell)
+    }
+}
+
+private struct HubCard: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let tint: Color
+    let action: () -> Void
+    @State private var hover = false
+    @Environment(\.isEnabled) private var enabled
+
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 0) {
+                Image(systemName: icon)
+                    .font(.system(size: 34, weight: .regular))
+                    .foregroundStyle(tint)
+                Spacer()
+                Text(title).font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading)
+                Text(subtitle).font(.system(size: 13)).foregroundStyle(C.body).lineLimit(1).padding(.top, 2)
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 240, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(LinearGradient(colors: [tint.opacity(hover ? 0.22 : 0.12), C.widget], startPoint: .topLeading, endPoint: .bottomTrailing))
+            )
+            .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 2 : 1))
+            .scaleEffect(hover ? 1.02 : 1)
+            .animation(.easeOut(duration: 0.15), value: hover)
+            .contentShape(RoundedRectangle(cornerRadius: 20))
+        }
+        .buttonStyle(.plain)
+        .opacity(enabled ? 1 : 0.4)
+        .onHover { hover = $0 }
+    }
+}
+
+/// Faixa "Continuar assistindo" no Início.
+private struct ContinueRow: View {
+    @Environment(AppModel.self) private var vm
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Continuar assistindo").font(.system(size: 15, weight: .semibold)).foregroundStyle(C.heading)
+                .padding(.horizontal, 48)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(vm.recents.prefix(20)) { RecentTile(progress: $0) }
+                }
+                .padding(.horizontal, 48)
+                .padding(.vertical, 6)
+            }
+        }
+    }
+}
+
+private struct RecentTile: View {
+    @Environment(AppModel.self) private var vm
+    let progress: WatchProgress
+    @State private var hover = false
+
+    var body: some View {
+        let item = progress.item
+        Button { vm.openRecent(progress) } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                PosterView(title: item.title, poster: item.poster, hover: hover)
+                    .overlay(alignment: .bottom) {
+                        ProgressLine(value: Double(progress.position) / Double(max(progress.duration, 1)))
+                            .padding(.horizontal, 10).padding(.top, 20).padding(.bottom, 10)
+                            .background(LinearGradient(colors: [.clear, .black.opacity(0.85)], startPoint: .top, endPoint: .bottom))
+                            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
+                    }
+                Text(item.subtitle ?? item.title).font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(hover ? C.heading : C.body).lineLimit(1)
+            }
+            .frame(width: 120)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { hover = $0 }
+        .contextMenu { Button("Tirar de Continuar assistindo", role: .destructive) { vm.removeRecent(progress) } }
+    }
+}
+
+// MARK: - Configurações (listas)
+
+struct SettingsView: View {
     @Environment(AppModel.self) private var vm
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 18) {
-                AppMark(size: 54)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Telvo").font(.system(size: 24, weight: .semibold)).foregroundStyle(C.heading)
-                    Text("Escolha uma lista ou adicione uma nova pela URL").font(.system(size: 14)).foregroundStyle(C.body)
-                }
-                Spacer()
+            TopBar(title: "Configurações", subtitle: "Suas listas IPTV", showBack: vm.current != nil) {
                 Pill(active: true, action: vm.newPlaylist) {
                     Image(systemName: "plus")
-                    Text("Adicionar por URL")
+                    Text("Adicionar lista")
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }
-            .padding(.horizontal, 40)
-            .padding(.vertical, 22)
-            .background(C.rail)
-
-            VStack(alignment: .leading, spacing: 8) {
-                SectionLabel(text: "Listas")
-                if vm.loading && vm.progress == nil {
-                    HStack(spacing: 8) { ProgressView().controlSize(.small); Text("Carregando…").font(.tSubtitle).foregroundStyle(C.body) }
-                        .padding(.horizontal, 12)
-                } else {
-                    StatusLine().padding(.horizontal, 12)
-                }
-                if vm.playlists.isEmpty {
-                    EmptyHome()
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 6) {
-                            ForEach(vm.playlists) { PlaylistRow(playlist: $0) }
-                        }
+            if vm.playlists.isEmpty {
+                EmptyHome()
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 8) {
+                        ForEach(vm.playlists) { PlaylistRow(playlist: $0) }
                     }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 20)
                 }
             }
-            .padding(.horizontal, 40)
-            .padding(.vertical, 20)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .background(C.shell)
     }
@@ -69,11 +224,15 @@ private struct EmptyHome: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Image(systemName: "play.tv").font(.system(size: 44, weight: .light)).foregroundStyle(C.muted)
-            Text("Nenhuma lista ainda").font(.tTitle).foregroundStyle(C.heading)
+            AppMark(size: 64)
+            Text("Bem-vindo ao Telvo").font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading)
             Text("Cole a URL M3U ou Xtream (get.php) do seu provedor para começar.")
                 .font(.tSubtitle).foregroundStyle(C.body)
-            Pill("Adicionar por URL", active: true, action: vm.newPlaylist)
+            Pill(active: true, action: vm.newPlaylist) {
+                Image(systemName: "plus")
+                Text("Adicionar lista")
+            }
+            .padding(.top, 6)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -97,13 +256,25 @@ private struct PlaylistRow: View {
                         Text(playlist.name).font(.tChannel).foregroundStyle(C.heading).lineLimit(1)
                         Text(meta).font(.system(size: 12)).foregroundStyle(C.body).lineLimit(1)
                     }
+                    Spacer()
+                    if playlist.id == vm.current?.id {
+                        Text("EM USO").font(.tTag).foregroundStyle(C.selection)
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            Pill("Atualizar", enabled: !vm.loading) { vm.refresh(playlist) }
-            Pill("Editar") { vm.edit(playlist) }
-            Pill("Excluir") { confirmDelete = true }
+            Menu {
+                Button("Atualizar agora") { vm.refresh(playlist) }.disabled(vm.loading)
+                Button("Editar…") { vm.edit(playlist) }
+                Divider()
+                Button("Excluir…", role: .destructive) { confirmDelete = true }
+            } label: {
+                Image(systemName: "ellipsis").foregroundStyle(C.body).frame(width: 34, height: 34)
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .frame(width: 40)
         }
         .confirmationDialog("Excluir \"\(playlist.name)\"?", isPresented: $confirmDelete) {
             Button("Excluir", role: .destructive) { vm.delete(playlist) }
@@ -114,7 +285,7 @@ private struct PlaylistRow: View {
 
     private var meta: String {
         let updated = playlist.updatedAt > 0 ? " · Atualizada \(dateTimeFormatter.string(from: date(playlist.updatedAt)))" : ""
-        return "Canais: \(playlist.channelCount) · Adicionada em \(dateFormatter.string(from: date(playlist.addedAt)))\(updated)"
+        return "\(playlist.channelCount) canais · Adicionada em \(dateFormatter.string(from: date(playlist.addedAt)))\(updated)"
     }
 }
 

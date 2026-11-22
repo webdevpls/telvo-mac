@@ -20,16 +20,15 @@ struct TelvoApp: App {
                 Button("Adicionar lista…") { vm.newPlaylist() }.keyboardShortcut("n")
             }
             CommandMenu("Assistir") {
-                Button("Ao vivo") { vm.openSection(.live) }.keyboardShortcut("1").disabled(vm.current == nil)
-                Button("Filmes") { vm.openSection(.movies) }.keyboardShortcut("2").disabled(!vm.hasVod)
-                Button("Séries") { vm.openSection(.series) }.keyboardShortcut("3").disabled(!vm.hasVod)
-                Button("Recentes") { vm.openSection(.recent) }.keyboardShortcut("4").disabled(!vm.hasVod)
+                Button("Início") { vm.goHome() }.keyboardShortcut("0")
+                Button("TV") { vm.openSection(.live) }.keyboardShortcut("1").disabled(vm.current == nil)
+                Button("Séries") { vm.openSection(.series) }.keyboardShortcut("2").disabled(!vm.hasVod)
+                Button("Filmes") { vm.openSection(.movies) }.keyboardShortcut("3").disabled(!vm.hasVod)
                 Divider()
-                Button("Mostrar/ocultar guia") { vm.showEpg.toggle() }.keyboardShortcut("g").disabled(!vm.hasEpg)
                 if let p = vm.current {
                     Button("Atualizar lista") { vm.refresh(p) }.keyboardShortcut("r").disabled(vm.loading)
                 }
-                Button("Listas") { vm.goHome() }.keyboardShortcut("l", modifiers: [.command, .shift])
+                Button("Configurações") { vm.openSettings() }.keyboardShortcut(",")
             }
         }
     }
@@ -41,9 +40,10 @@ struct RootView: View {
     var body: some View {
         Group {
             switch vm.screen {
-            case .home: HomeView()
+            case .hub: HubView()
+            case .settings: SettingsView()
             case .form(let editing): FormView(editing: editing)
-            case .watch: WatchView()
+            case .section: WatchView()
             }
         }
         .background(C.shell)
@@ -62,7 +62,6 @@ struct WatchView: View {
         } else {
             switch vm.section {
             case .live: LiveView()
-            case .recent: RecentView()
             case .movies, .series:
                 if vm.openSeries != nil { SeriesDetail() } else { VodBrowser() }
             }

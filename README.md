@@ -18,21 +18,29 @@ xcodebuild -project Telvo.xcodeproj -scheme Telvo -configuration Release -derive
 open build/Build/Products/Release/Telvo.app
 ```
 
+## Navegação
+
+O **Início** tem quatro cartões: **TV**, **Séries**, **Filmes** e **Configurações** (onde ficam as listas),
+mais a faixa **Continuar assistindo**. Em cada tela, a barra do topo tem **← Início** e a busca.
+
+Na TV, a coluna da esquerda tem um seletor único (Todos, Favoritos ou um grupo) e o vídeo fica à
+direita com "Agora / A seguir" embaixo. Os controles (pausa, volume, ★, tela cheia) aparecem sobre o vídeo.
+
 ## Atalhos
 
-| Tecla | Ao vivo | Filmes e séries |
+| Tecla | TV | Filmes e séries |
 |---|---|---|
 | Espaço | pausa (despausar volta ao ao vivo) | pausa / continua |
 | ↑ ↓ | troca de canal | volume |
-| ← → | — | volta / avança 10 s |
-| + − / M | volume / mudo | volume / mudo |
+| ← → / + − | volume | volta / avança 10 s (+ − volume) |
+| M | mudo | mudo |
 | F ou clique duplo | tela cheia | tela cheia |
-| N / P | — | próximo / episódio anterior |
+| N / P | próximo / canal anterior | próximo / episódio anterior |
 | Esc | volta | volta |
-| ⌘1–4 | Ao vivo, Filmes, Séries, Recentes | |
-| ⌘G / ⌘R | guia / atualizar lista | |
+| ⌘0–3 | Início, TV, Séries, Filmes | |
+| ⌘, / ⌘R | Configurações / atualizar lista | |
 
-Botão direito num canal favorita; num item de Recentes, tira da lista.
+Botão direito num canal favorita; num item de Continuar assistindo, tira da lista.
 
 ## Estrutura
 

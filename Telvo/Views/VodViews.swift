@@ -13,10 +13,12 @@ struct VodBrowser: View {
         let noun = vm.section == .movies ? "filmes" : "séries"
         let total = vm.section == .movies ? vm.movies.count : vm.seriesList.count
 
+        VStack(spacing: 0) {
+        TopBar(title: vm.section.rawValue, subtitle: vm.current?.name) {
+            SearchField(placeholder: "Buscar \(noun)", text: $vm.vodQuery).frame(width: 260)
+        }
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                SectionPills()
-                SearchField(placeholder: "Buscar \(noun)", text: $vm.vodQuery).padding(.bottom, 10)
                 SectionLabel(text: "\(categories.count) categorias")
                 ScrollView {
                     LazyVStack(spacing: 2) {
@@ -38,15 +40,8 @@ struct VodBrowser: View {
             VStack(alignment: .leading, spacing: 4) {
                 let title = vm.vodCategory.flatMap { id in categories.first { $0.id == id }.map { shortCategory($0.name) } }
                     ?? (vm.section == .movies ? "Todos os filmes" : "Todas as séries")
-                HStack(alignment: .firstTextBaseline) {
-                    Text(title).font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading).lineLimit(1)
-                    Spacer()
-                    Pill("Listas", action: vm.goHome)
-                }
-                HStack(spacing: 12) {
-                    Text(items.count == 1 ? "1 título" : "\(items.count) títulos").font(.tSubtitle).foregroundStyle(C.body)
-                    StatusLine()
-                }
+                Text(title).font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading).lineLimit(1)
+                Text(items.count == 1 ? "1 título" : "\(items.count) títulos").font(.tSubtitle).foregroundStyle(C.body)
                 if vm.vodLoading && items.isEmpty {
                     HStack(spacing: 8) { ProgressView().controlSize(.small); Text("Carregando \(noun)…") }
                         .font(.tSubtitle).foregroundStyle(C.body).padding(.top, 24)
@@ -61,6 +56,7 @@ struct VodBrowser: View {
             .padding(.horizontal, 28)
             .padding(.top, 20)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
         }
         .background(C.shell)
     }
@@ -357,86 +353,6 @@ struct VodPlayerView: View {
         hideTask = Task {
             try? await Task.sleep(nanoseconds: 4_000_000_000)
             if !Task.isCancelled && player.isPlaying && scrubbing == nil { showControls = false }
-        }
-    }
-}
-
-// MARK: - Recentes
-
-struct RecentView: View {
-    @Environment(AppModel.self) private var vm
-
-    var body: some View {
-        HStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 6) {
-                SectionPills()
-                SectionLabel(text: "Continuar assistindo").padding(.top, 6)
-                Text("Filmes e episódios que você começou. Clique para continuar; botão direito para tirar da lista.")
-                    .font(.tSubtitle).foregroundStyle(C.body).padding(.horizontal, 12)
-                Spacer()
-            }
-            .padding(.horizontal, 12)
-            .padding(.top, 16)
-            .frame(width: 300)
-            .background(C.rail)
-
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text("Recentes").font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading)
-                    Spacer()
-                    Pill("Listas", action: vm.goHome)
-                }
-                Text(vm.recents.count == 1 ? "1 título" : "\(vm.recents.count) títulos").font(.tSubtitle).foregroundStyle(C.body)
-                if vm.recents.isEmpty {
-                    Text("Nada por aqui ainda. Comece um filme ou episódio e ele aparece aqui com o tempo em que você parou.")
-                        .font(.tSubtitle).foregroundStyle(C.body).padding(.top, 24)
-                    Spacer()
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 140, maximum: 190), spacing: 20)], spacing: 24) {
-                            ForEach(vm.recents) { RecentCard(progress: $0) }
-                        }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 4)
-                    }
-                }
-            }
-            .padding(.horizontal, 28)
-            .padding(.top, 20)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        }
-        .background(C.shell)
-    }
-}
-
-private struct RecentCard: View {
-    @Environment(AppModel.self) private var vm
-    let progress: WatchProgress
-    @State private var hover = false
-
-    var body: some View {
-        let item = progress.item
-        Button { vm.openRecent(progress) } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                PosterView(title: item.title, poster: item.poster, hover: hover)
-                    .overlay(alignment: .bottom) {
-                        ProgressLine(value: Double(progress.position) / Double(max(progress.duration, 1)))
-                            .padding(.horizontal, 10).padding(.top, 24).padding(.bottom, 10)
-                            .background(LinearGradient(colors: [.clear, .black.opacity(0.85)], startPoint: .top, endPoint: .bottom))
-                            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
-                    }
-                Text(item.subtitle.map { "\($0) · \(item.title)" } ?? item.title)
-                    .font(.system(size: 13, weight: .semibold)).foregroundStyle(hover ? C.heading : C.body)
-                    .lineLimit(2, reservesSpace: true)
-                Text("Parou em \(formatDuration(progress.position)) de \(formatDuration(progress.duration))")
-                    .font(.tMeta).foregroundStyle(C.muted)
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .onHover { hover = $0 }
-        .contextMenu {
-            Button("Tirar dos recentes", role: .destructive) { vm.removeRecent(progress) }
         }
     }
 }

@@ -2,24 +2,23 @@ import Foundation
 import Observation
 
 enum Section: String, CaseIterable, Identifiable {
-    case live = "Ao vivo"
-    case movies = "Filmes"
+    case live = "TV"
     case series = "Séries"
-    case recent = "Recentes"
+    case movies = "Filmes"
     var id: Self { self }
 }
 
-enum SidebarTab: String, CaseIterable, Identifiable {
-    case all = "Todos"
-    case groups = "Grupos"
-    case favorites = "Favoritos"
-    var id: Self { self }
+/// Filtro único da lista de canais: substitui as abas Todos/Grupos/Favoritos.
+enum LiveFilter: Hashable {
+    case all, favorites
+    case group(String)
 }
 
 enum Screen: Equatable {
-    case home
+    case hub              // Início: TV, Séries, Filmes, Configurações
+    case section          // dentro de TV, Séries ou Filmes
+    case settings         // listas
     case form(editing: Playlist?)
-    case watch
 }
 
 /// Teclas que o app trata em qualquer tela (monitor global em TelvoApp).
@@ -54,7 +53,7 @@ final class AppModel {
     @ObservationIgnored var keyHandler: ((AppKey) -> Bool)?
 
     var playlists: [Playlist] = []
-    private(set) var screen: Screen = .home
+    private(set) var screen: Screen = .hub
     private(set) var current: Playlist?
     private(set) var channels: [Channel] = []
     private(set) var groups: [String] = []
@@ -69,9 +68,8 @@ final class AppModel {
 
     // Ao vivo
     private(set) var section: Section = .live
-    var tab: SidebarTab = .all
+    var filter: LiveFilter = .all
     var query = ""
-    private(set) var group: String?
     private(set) var playing: Channel?
     private(set) var playingNumber = 0
     var fullscreen = false
@@ -103,26 +101,35 @@ final class AppModel {
         clock = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.now = nowMs() }
         }
-        if let id = store.lastPlaylistId, let p = playlists.first(where: { $0.id == id }) { open(p) }
+        if let id = store.lastPlaylistId, let p = playlists.first(where: { $0.id == id }) { open(p) } else { screen = .settings }
     }
 
     // MARK: - Ao vivo
 
     func visibleChannels() -> [Channel] {
         let q = normalize(query)
+        // Buscando, procura em todos os canais.
         let base: [Channel]
-        switch tab {
-        case .all: base = channels
-        case .favorites: base = channels.filter { favorites.contains($0.url) }
-        // Buscando sem grupo aberto, procura em todos os canais.
-        case .groups: base = group.flatMap { byGroup[$0] } ?? (q.isEmpty ? [] : channels)
+        if !q.isEmpty { base = channels } else {
+            switch filter {
+            case .all: base = channels
+            case .favorites: base = channels.filter { favorites.contains($0.url) }
+            case .group(let g): base = byGroup[g] ?? []
+            }
         }
         return q.isEmpty ? base : base.filter { normalize($0.name).contains(q) }
     }
 
     func groupSize(_ name: String) -> Int { byGroup[name]?.count ?? 0 }
+    var favoritesCount: Int { channels.filter { favorites.contains($0.url) }.count }
 
-    func showGroup(_ name: String?) { group = name }
+    var filterTitle: String {
+        switch filter {
+        case .all: return "Todos os canais"
+        case .favorites: return "Favoritos"
+        case .group(let g): return g
+        }
+    }
 
     func programmes(_ channel: Channel) -> [Programme] {
         let list = epg.programmes(channel)
@@ -150,6 +157,7 @@ final class AppModel {
     // MARK: - Seções, filmes e séries
 
     func openSection(_ s: Section) {
+        screen = .section
         guard section != s else { return }
         section = s
         vodCategory = nil
@@ -272,10 +280,14 @@ final class AppModel {
 
     func newPlaylist() { clearMessages(); screen = .form(editing: nil) }
     func edit(_ p: Playlist) { clearMessages(); screen = .form(editing: p) }
+    func openSettings() { clearMessages(); screen = .settings }
 
+    /// Volta para o Início (hub). Sem lista aberta, o Início é a tela de listas.
     func goHome() {
         fullscreen = false
-        screen = .home
+        vodPlayback = nil
+        resumePrompt = nil
+        screen = current == nil ? .settings : .hub
     }
 
     func save(_ editing: Playlist?, _ form: PlaylistForm) {
@@ -318,7 +330,7 @@ final class AppModel {
                 } else {
                     // Força recarregar na próxima vez que abrir.
                     if current?.id == saved.id { current = nil }
-                    screen = .home
+                    screen = .settings
                 }
             } catch {
                 if !Task.isCancelled { self.error = "Não consegui carregar a lista: \(describe(error))" }
@@ -342,10 +354,11 @@ final class AppModel {
                     current = updated
                     loadEpg(updated, force: !quiet)
                     // Recarrega a seção de VOD aberta com os dados novos.
-                    let open = section
+                    let open = section, where_ = screen
                     if open != .live {
                         section = .live
                         openSection(open)
+                        screen = where_
                     }
                 }
                 if !quiet { notice = "\"\(p.name)\" atualizada: \(count) canais ao vivo" }
@@ -369,7 +382,7 @@ final class AppModel {
 
     func open(_ p: Playlist) {
         if current?.id == p.id && !channels.isEmpty {
-            enterWatch()
+            enterHub()
             return
         }
         loadTask?.cancel()
@@ -388,30 +401,31 @@ final class AppModel {
                 section = .live
                 let last = store.lastChannel(latest.id)
                 if let index = channels.firstIndex(where: { $0.url == last }) { setPlaying(channels, index) } else { playing = nil }
-                enterWatch()
+                enterHub()
                 loadEpg(latest, force: false)
                 if latest.autoUpdate && latest.updatedAt > 0 { refresh(latest, quiet: true) }
             } catch {
                 if !Task.isCancelled {
                     self.error = "Não consegui abrir a lista: \(describe(error))"
-                    screen = .home
+                    screen = .settings
                 }
             }
         }
     }
 
-    /// Esc / ⌘[: volta um nível, como o botão Voltar do controle no Android.
+    /// Esc: volta um nível, como o botão Voltar do controle no Android.
     func back() {
         if resumePrompt != nil { resumePrompt = nil }
         else if vodPlayback != nil { vodPlayback = nil }
         else if fullscreen { fullscreen = false }
-        else if case .form = screen { screen = .home }
-        else if openSeries != nil { openSeries = nil }
-        else if section != .live && !vodQuery.isEmpty { vodQuery = "" }
-        else if section != .live { openSection(.live) }
-        else if !query.isEmpty { query = "" }
-        else if tab == .groups && group != nil { showGroup(nil) }
-        else if screen == .watch { screen = .home }
+        else if case .form = screen { screen = playlists.isEmpty ? .settings : .settings }
+        else if screen == .settings { if current != nil { screen = .hub } }
+        else if screen == .section {
+            if openSeries != nil { openSeries = nil }
+            else if section == .live && !query.isEmpty { query = "" }
+            else if section != .live && !vodQuery.isEmpty { vodQuery = "" }
+            else { screen = .hub }
+        }
     }
 
     // MARK: - Internos
@@ -493,11 +507,10 @@ final class AppModel {
         }
     }
 
-    private func enterWatch() {
-        group = nil
+    private func enterHub() {
         query = ""
         fullscreen = false
-        screen = .watch
+        screen = .hub
     }
 
     private func setPlaying(_ list: [Channel], _ index: Int) {
