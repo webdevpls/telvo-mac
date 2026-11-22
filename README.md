@@ -9,7 +9,7 @@ quando o servidor trava.
 
 ## Baixar
 
-1. Baixe o **Telvo-1.0.dmg** na página de [Releases](https://github.com/webdevpls/telvo-mac/releases/latest).
+1. Baixe o **Telvo.dmg** na página de [Releases](https://github.com/webdevpls/telvo-mac/releases/latest).
 2. Abra o `.dmg` e arraste o **Telvo** para a pasta **Aplicativos**.
 3. Na primeira vez, o macOS avisa que não consegue verificar o desenvolvedor (o app não é
    assinado com conta paga da Apple). Para liberar, uma vez só:
@@ -19,6 +19,17 @@ quando o servidor trava.
    Ou, pelo Terminal: `xattr -dr com.apple.quarantine /Applications/Telvo.app`
 
 Funciona em Macs com Apple Silicon e Intel, macOS 14 ou mais novo.
+
+### Pelo Terminal (instala ou atualiza)
+
+```bash
+curl -L -o /tmp/Telvo.dmg https://github.com/webdevpls/telvo-mac/releases/latest/download/Telvo.dmg && \
+hdiutil attach -nobrowse -quiet /tmp/Telvo.dmg && \
+rm -rf /Applications/Telvo.app && cp -R /Volumes/Telvo/Telvo.app /Applications/ && \
+hdiutil detach -quiet /Volumes/Telvo && xattr -dr com.apple.quarantine /Applications/Telvo.app && \
+rm /tmp/Telvo.dmg && open /Applications/Telvo.app
+```
+
 
 ## Build
 
