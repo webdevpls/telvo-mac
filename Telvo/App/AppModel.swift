@@ -424,6 +424,7 @@ final class AppModel {
             if openSeries != nil { openSeries = nil }
             else if section == .live && !query.isEmpty { query = "" }
             else if section != .live && !vodQuery.isEmpty { vodQuery = "" }
+            else if section != .live && vodCategory != nil { vodCategory = nil }
             else { screen = .hub }
         }
     }

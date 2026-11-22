@@ -7,77 +7,117 @@ struct VodBrowser: View {
 
     var body: some View {
         @Bindable var vm = vm
-        let items = vm.vodItems()
         let categories = vm.vodCategories(for: vm.section)
-        let counts = vm.vodCounts()
+        let all = vm.section == .movies ? vm.movies : vm.seriesList
         let noun = vm.section == .movies ? "filmes" : "séries"
-        let total = vm.section == .movies ? vm.movies.count : vm.seriesList.count
+        let searching = !vm.vodQuery.isEmpty
+        let category = vm.vodCategory.flatMap { id in categories.first { $0.id == id } }
 
         VStack(spacing: 0) {
-        TopBar(title: vm.section.rawValue, subtitle: vm.current?.name) {
-            SearchField(placeholder: "Buscar \(noun)", text: $vm.vodQuery).frame(width: 260)
-        }
-        HStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 0) {
-                SectionLabel(text: "\(categories.count) categorias")
-                ScrollView {
-                    LazyVStack(spacing: 2) {
-                        CategoryRow(name: "Todas", count: total, selected: vm.vodCategory == nil) { vm.vodCategory = nil }
-                        ForEach(categories) { c in
-                            CategoryRow(name: shortCategory(c.name), count: counts[c.id] ?? 0, selected: vm.vodCategory == c.id) {
-                                vm.vodCategory = c.id
+            TopBar(title: vm.section.rawValue, subtitle: vm.current?.name) {
+                SearchField(placeholder: "Buscar \(noun)", text: $vm.vodQuery).frame(width: 260)
+            }
+            if vm.vodLoading && all.isEmpty {
+                HStack(spacing: 8) { ProgressView().controlSize(.small); Text("Carregando \(noun)…") }
+                    .font(.tSubtitle).foregroundStyle(C.body).padding(40)
+                Spacer()
+            } else if searching || category != nil {
+                let items = vm.vodItems()
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 12) {
+                        if category != nil && !searching {
+                            Pill(horizontalPadding: 12, action: { vm.vodCategory = nil }) {
+                                Image(systemName: "chevron.left")
+                                Text("Todas as categorias")
                             }
                         }
+                        Text(searching ? "Resultados da busca" : shortCategory(category?.name ?? ""))
+                            .font(.system(size: 20, weight: .semibold)).foregroundStyle(C.heading).lineLimit(1)
+                        Text(items.count == 1 ? "1 título" : "\(items.count) títulos").font(.tSubtitle).foregroundStyle(C.body)
                     }
-                    .padding(.bottom, 12)
+                    if items.isEmpty {
+                        Text("Nada encontrado.").font(.tSubtitle).foregroundStyle(C.body).padding(.top, 24)
+                        Spacer()
+                    } else {
+                        PosterGrid(items: items)
+                    }
                 }
+                .padding(.horizontal, 28)
+                .padding(.top, 18)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            } else {
+                VodRows(categories: categories, all: all)
             }
-            .padding(.horizontal, 12)
-            .padding(.top, 16)
-            .frame(width: 300)
-            .background(C.rail)
-
-            VStack(alignment: .leading, spacing: 4) {
-                let title = vm.vodCategory.flatMap { id in categories.first { $0.id == id }.map { shortCategory($0.name) } }
-                    ?? (vm.section == .movies ? "Todos os filmes" : "Todas as séries")
-                Text(title).font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading).lineLimit(1)
-                Text(items.count == 1 ? "1 título" : "\(items.count) títulos").font(.tSubtitle).foregroundStyle(C.body)
-                if vm.vodLoading && items.isEmpty {
-                    HStack(spacing: 8) { ProgressView().controlSize(.small); Text("Carregando \(noun)…") }
-                        .font(.tSubtitle).foregroundStyle(C.body).padding(.top, 24)
-                    Spacer()
-                } else if items.isEmpty {
-                    Text("Nada encontrado.").font(.tSubtitle).foregroundStyle(C.body).padding(.top, 24)
-                    Spacer()
-                } else {
-                    PosterGrid(items: items)
-                }
-            }
-            .padding(.horizontal, 28)
-            .padding(.top, 20)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        }
         }
         .background(C.shell)
     }
 }
 
-private struct CategoryRow: View {
-    let name: String
-    let count: Int
-    let selected: Bool
-    let action: () -> Void
+private let rowLimit = 30
+
+/// Fileiras no estilo Google TV: uma por categoria, com "Ver todos" no fim.
+private struct VodRows: View {
+    @Environment(AppModel.self) private var vm
+    let categories: [VodCategory]
+    let all: [VodItem]
 
     var body: some View {
-        RowButton(selected: selected, radius: 8, action: action) {
-            HStack {
-                Text(name).font(.tRow).lineLimit(1)
-                Spacer()
-                Text("\(count)").font(.system(size: 12)).foregroundStyle(C.muted)
+        let byCategory = Dictionary(grouping: all, by: \.categoryId)
+        let rows = categories.filter { !(byCategory[$0.id]?.isEmpty ?? true) }
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 6) {
+                ForEach(rows) { c in
+                    let items = byCategory[c.id] ?? []
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(shortCategory(c.name)).font(.system(size: 17, weight: .semibold)).foregroundStyle(C.heading)
+                        Text("\(items.count)").font(.tSubtitle).foregroundStyle(C.muted)
+                        Spacer()
+                        if items.count > rowLimit {
+                            Button("Ver todos") { vm.vodCategory = c.id }
+                                .buttonStyle(.plain).font(.system(size: 13, weight: .semibold)).foregroundStyle(C.selection)
+                        }
+                    }
+                    .padding(.horizontal, 28)
+                    .padding(.top, 14)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack(spacing: 18) {
+                            ForEach(items.prefix(rowLimit)) { item in
+                                PosterCard(item: item) { vm.openVod(item) }.frame(width: 140)
+                            }
+                            if items.count > rowLimit {
+                                SeeAllCard(count: items.count) { vm.vodCategory = c.id }.frame(width: 140)
+                            }
+                        }
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 8)
+                    }
+                }
             }
-            .padding(.horizontal, 12)
-            .frame(height: 36)
+            .padding(.bottom, 32)
         }
+    }
+}
+
+private struct SeeAllCard: View {
+    let count: Int
+    let action: () -> Void
+    @State private var hover = false
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Text("Ver todos").font(.system(size: 14, weight: .semibold)).foregroundStyle(C.heading)
+                Text("\(count) títulos").font(.tMeta).foregroundStyle(C.body)
+            }
+            .frame(maxWidth: .infinity)
+            .aspectRatio(2 / 3, contentMode: .fit)
+            .background(RoundedRectangle(cornerRadius: 12).fill(hover ? C.cardHover : C.widget))
+            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 3 : 1))
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .onHover { hover = $0 }
+        .padding(.bottom, 40)
     }
 }
 
