@@ -11,7 +11,7 @@ struct LiveView: View {
         VStack(spacing: 0) {
             if !vm.fullscreen {
                 TopBar(title: "TV", subtitle: vm.current?.name) {
-                    SearchField(placeholder: "Buscar canal", text: $vm.query).frame(width: 260)
+                    SearchField(placeholder: "Buscar canal", text: $vm.query, focusTrigger: vm.searchRequest).frame(width: 260)
                 }
             }
             HStack(spacing: 0) {
@@ -25,7 +25,6 @@ struct LiveView: View {
                 }
             }
         }
-        .background(C.shell)
         .task(id: vm.current?.id) {
             player?.release()
             player = VideoPlayer(userAgent: vm.current?.userAgent ?? defaultUserAgent)
@@ -65,8 +64,8 @@ private struct ChannelColumn: View {
                 }
                 .padding(.horizontal, 14)
                 .frame(height: 50)
-                .background(RoundedRectangle(cornerRadius: 12).fill(C.widget))
-                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(picking ? C.selectionBorder : C.separator))
+                .background(RoundedRectangle(cornerRadius: 6).fill(C.widget))
+                .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(picking ? C.selectionBorder : C.separator))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -80,7 +79,7 @@ private struct ChannelColumn: View {
         }
         .padding(.horizontal, 12)
         .padding(.top, 12)
-        .background(C.rail)
+        .background(.ultraThinMaterial.opacity(0.7))
         .onChange(of: vm.query) { _, q in if !q.isEmpty { picking = false } }
     }
 
@@ -112,7 +111,7 @@ private struct FilterList: View {
     }
 
     private func row(_ title: String, count: Int, icon: String?, filter: LiveFilter) -> some View {
-        RowButton(selected: vm.filter == filter, radius: 8, action: {
+        RowButton(selected: vm.filter == filter, radius: 5, action: {
             vm.filter = filter
             done()
         }) {
@@ -169,7 +168,7 @@ private struct ChannelRow: View {
 
     var body: some View {
         let now = vm.nowFor(channel)
-        RowButton(selected: selected, radius: 10, action: action) {
+        RowButton(selected: selected, radius: 5, action: action) {
             HStack(spacing: 12) {
                 ChannelLogo(channel: channel, number: number, size: 40)
                 VStack(alignment: .leading, spacing: 2) {
@@ -373,6 +372,6 @@ private struct NowNextCard: View {
             }
         }
         .padding(16)
-        .background(RoundedRectangle(cornerRadius: 14).fill(C.widget))
+        .background(RoundedRectangle(cornerRadius: 8).fill(C.widget))
     }
 }

@@ -18,6 +18,7 @@
 		61B073B4352C9F7890F5A1D6 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCC71DE95F73AA4CAFE098B /* AppModel.swift */; };
 		6226088BD111832DE2C1C92A /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E58A4B030DE4FACEAFE7C45 /* Model.swift */; };
 		77A6AE8F4B430B95276A770E /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DA953A950B15F64EE343CAF /* VideoPlayer.swift */; };
+		840F144941CFBED060C3DE43 /* NavRail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774521ECC1D9924B0BA1F4D /* NavRail.swift */; };
 		9D1A750A9483591298C21FAC /* TelvoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAF15BA1D2A5C07AD4A1C17 /* TelvoApp.swift */; };
 		A466CBEFBF812F9B288346D4 /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6548C506F6D64ACFF9F79C78 /* Http.swift */; };
 		C096FFB14BC6EB1E64E8B2CB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325834A2CF56D3030E709392 /* Theme.swift */; };
@@ -52,6 +53,7 @@
 		6548C506F6D64ACFF9F79C78 /* Http.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
 		67201DE7BE2774D239D6FA80 /* EPG.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EPG.swift; sourceTree = "<group>"; };
 		6814A955F0364FC0573C82FC /* Telvo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Telvo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A774521ECC1D9924B0BA1F4D /* NavRail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavRail.swift; sourceTree = "<group>"; };
 		CD1B4CAE8CD49DBB7A41A48E /* PlayerControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControls.swift; sourceTree = "<group>"; };
 		D04F32687C5C10D3111A7B31 /* VodViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VodViews.swift; sourceTree = "<group>"; };
 		D768851FEB908E52E5B2AA0B /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 			children = (
 				DC515B709B58BF65E7D92131 /* HomeView.swift */,
 				61432AB37E67E785C9E0A6CC /* LiveView.swift */,
+				A774521ECC1D9924B0BA1F4D /* NavRail.swift */,
 				325834A2CF56D3030E709392 /* Theme.swift */,
 				D04F32687C5C10D3111A7B31 /* VodViews.swift */,
 			);
@@ -218,6 +221,7 @@
 				5211E9DA8E9EAE3FC5856E2B /* LiveView.swift in Sources */,
 				5B6599183BAB93379B1EBF3D /* M3U.swift in Sources */,
 				6226088BD111832DE2C1C92A /* Model.swift in Sources */,
+				840F144941CFBED060C3DE43 /* NavRail.swift in Sources */,
 				5967D75DE2E70DE620B0381F /* PlayerControls.swift in Sources */,
 				C6902ABEF4E334AB8A77B0A8 /* Store.swift in Sources */,
 				9D1A750A9483591298C21FAC /* TelvoApp.swift in Sources */,

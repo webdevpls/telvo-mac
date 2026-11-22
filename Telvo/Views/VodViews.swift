@@ -31,8 +31,8 @@ struct VodBrowser: View {
                 .fixedSize()
                 .padding(.horizontal, 12)
                 .frame(height: 30)
-                .background(Capsule().fill(C.widgetHeader))
-                .overlay(Capsule().strokeBorder(C.separator))
+                .background(RoundedRectangle(cornerRadius: 5).fill(C.widgetHeader))
+                .overlay(RoundedRectangle(cornerRadius: 5).strokeBorder(C.separator))
                 SearchField(placeholder: "Buscar \(noun)", text: $vm.vodQuery).frame(width: 260)
             }
             if vm.vodLoading && all.isEmpty {
@@ -67,7 +67,6 @@ struct VodBrowser: View {
                 VodRows(categories: categories, all: all)
             }
         }
-        .background(C.shell)
     }
 }
 
@@ -129,8 +128,8 @@ private struct SeeAllCard: View {
             }
             .frame(maxWidth: .infinity)
             .aspectRatio(2 / 3, contentMode: .fit)
-            .background(RoundedRectangle(cornerRadius: 12).fill(hover ? C.cardHover : C.widget))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 3 : 1))
+            .background(RoundedRectangle(cornerRadius: 6).fill(hover ? C.cardHover : C.widget))
+            .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 3 : 1))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -237,7 +236,6 @@ struct SeriesDetail: View {
                 RemoteImage(url: series.poster, fill: true)
                     .frame(height: 420).clipped().opacity(0.12).blur(radius: 30)
             }
-            .background(C.shell)
         }
     }
 }

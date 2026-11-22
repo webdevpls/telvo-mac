@@ -26,12 +26,6 @@ struct TopBar<Trailing: View>: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            if showBack {
-                Pill(horizontalPadding: 12, action: vm.goHome) {
-                    Image(systemName: "chevron.left")
-                    Text("Início")
-                }
-            }
             VStack(alignment: .leading, spacing: 1) {
                 Text(title).font(.system(size: 20, weight: .semibold)).foregroundStyle(C.heading).lineLimit(1)
                 if let subtitle { Text(subtitle).font(.tSubtitle).foregroundStyle(C.body).lineLimit(1) }
@@ -40,11 +34,10 @@ struct TopBar<Trailing: View>: View {
             StatusLine()
             trailing()
         }
-        .padding(.leading, 24)
+        .padding(.leading, 8)
         .padding(.trailing, 24)
         .padding(.top, 28)
         .padding(.bottom, 14)
-        .background(C.rail)
     }
 }
 
@@ -56,89 +49,138 @@ extension TopBar where Trailing == EmptyView {
 
 // MARK: - Início
 
+private let clockFormatter: DateFormatter = {
+    let f = DateFormatter()
+    f.dateFormat = "HH:mm"
+    return f
+}()
+
+private let longDateFormatter: DateFormatter = {
+    let f = DateFormatter()
+    f.locale = Locale(identifier: "pt_BR")
+    f.dateFormat = "EEEE, d 'de' MMMM"
+    return f
+}()
+
 struct HubView: View {
     @Environment(AppModel.self) private var vm
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 14) {
-                AppMark(size: 40)
-                VStack(alignment: .leading, spacing: 1) {
-                    Text("Telvo").font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading)
-                    Text(vm.current?.name ?? "").font(.tSubtitle).foregroundStyle(C.body)
+            HStack(spacing: 12) {
+                AppMark(size: 34)
+                Text("Telvo").font(.system(size: 26, weight: .bold)).foregroundStyle(.white)
+                if let name = vm.current?.name {
+                    Text(name).font(.system(size: 13)).foregroundStyle(.white.opacity(0.45)).padding(.leading, 4)
                 }
                 Spacer()
                 StatusLine()
             }
-            .padding(.horizontal, 48)
-            .padding(.top, 36)
+            .padding(.top, 44)
 
             Spacer(minLength: 24)
 
-            HStack(spacing: 20) {
-                HubCard(title: "TV", subtitle: "\(vm.channels.count) canais ao vivo", icon: "tv", tint: C.selection) {
-                    vm.openSection(.live)
+            HStack(alignment: .center, spacing: 40) {
+                HStack(alignment: .bottom, spacing: 22) {
+                    HubCard(title: "TV ao vivo", subtitle: "\(vm.channels.count) canais", icon: "tv", badge: "Ao vivo") {
+                        vm.openSection(.live)
+                    }
+                    .keyboardShortcut("1", modifiers: [])
+                    HubCard(title: "Séries", subtitle: vm.seriesList.isEmpty ? "Temporadas e episódios" : "\(vm.seriesList.count) séries",
+                            icon: "rectangle.stack", badge: "Séries") { vm.openSection(.series) }
+                        .keyboardShortcut("2", modifiers: [])
+                        .disabled(!vm.hasVod)
+                    HubCard(title: "Filmes", subtitle: vm.movies.isEmpty ? "Catálogo completo" : "\(vm.movies.count) filmes",
+                            icon: "film", badge: "Filmes") { vm.openSection(.movies) }
+                        .keyboardShortcut("3", modifiers: [])
+                        .disabled(!vm.hasVod)
                 }
-                .keyboardShortcut("1", modifiers: [])
-                HubCard(title: "Séries", subtitle: vm.seriesList.isEmpty ? "Temporadas e episódios" : "\(vm.seriesList.count) séries",
-                        icon: "rectangle.stack", tint: Color(hex: 0xC084FC)) { vm.openSection(.series) }
-                    .keyboardShortcut("2", modifiers: [])
-                    .disabled(!vm.hasVod)
-                HubCard(title: "Filmes", subtitle: vm.movies.isEmpty ? "Catálogo completo" : "\(vm.movies.count) filmes",
-                        icon: "film", tint: Color(hex: 0xFBBF24)) { vm.openSection(.movies) }
-                    .keyboardShortcut("3", modifiers: [])
-                    .disabled(!vm.hasVod)
-                HubCard(title: "Configurações", subtitle: "Listas e conta", icon: "gearshape", tint: C.body) {
-                    vm.openSettings()
-                }
-                .keyboardShortcut("4", modifiers: [])
+                Spacer(minLength: 0)
+                ClockView()
             }
-            .padding(.horizontal, 48)
 
             if !vm.recents.isEmpty {
-                ContinueRow().padding(.top, 36)
+                ContinueRow().padding(.top, 44)
             }
 
             Spacer(minLength: 24)
         }
+        .padding(.horizontal, 48)
+        .padding(.bottom, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(C.shell)
     }
 }
 
+/// Relógio grande com a data, à direita do Início.
+private struct ClockView: View {
+    var body: some View {
+        TimelineView(.everyMinute) { context in
+            VStack(alignment: .center, spacing: 4) {
+                Text(clockFormatter.string(from: context.date))
+                    .font(.system(size: 104, weight: .thin))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                Text(longDateFormatter.string(from: context.date).capitalized(with: Locale(identifier: "pt_BR")))
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white.opacity(0.7))
+            }
+        }
+    }
+}
+
+/// Cartão alto de vidro. Tamanho fixo (o hover só escala, sem empurrar os vizinhos):
+/// acende o azul, mostra o selo e o traço embaixo.
 private struct HubCard: View {
     let title: String
     let subtitle: String
     let icon: String
-    let tint: Color
+    let badge: String
     let action: () -> Void
     @State private var hover = false
     @Environment(\.isEnabled) private var enabled
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 0) {
-                Image(systemName: icon)
-                    .font(.system(size: 34, weight: .regular))
-                    .foregroundStyle(tint)
-                Spacer()
-                Text(title).font(.system(size: 22, weight: .semibold)).foregroundStyle(C.heading)
-                Text(subtitle).font(.system(size: 13)).foregroundStyle(C.body).lineLimit(1).padding(.top, 2)
+            VStack(spacing: 14) {
+                ZStack(alignment: .topTrailing) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LinearGradient(
+                            colors: [Color.white.opacity(0.09), Color.white.opacity(0.03)],
+                            startPoint: .top, endPoint: .bottom))
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(LinearGradient(
+                            colors: [C.accent.opacity(0.85), Color(hex: 0x1A2260).opacity(0.9), Color(hex: 0x10121F)],
+                            startPoint: .top, endPoint: .bottom))
+                        .opacity(hover ? 1 : 0)
+                    RoundedRectangle(cornerRadius: 8).strokeBorder(Color.white.opacity(hover ? 0.24 : 0.08))
+                    Text(badge)
+                        .font(.system(size: 11.5, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10).padding(.vertical, 5)
+                        .background(RoundedRectangle(cornerRadius: 5).fill(C.accent))
+                        .padding(12)
+                        .opacity(hover ? 1 : 0)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Image(systemName: icon).font(.system(size: 22)).foregroundStyle(.white.opacity(0.9))
+                        Text(title).font(.system(size: 16, weight: .semibold)).foregroundStyle(.white)
+                        Text(subtitle).font(.system(size: 12)).foregroundStyle(.white.opacity(0.55)).lineLimit(1)
+                    }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                }
+                .frame(width: 210, height: 290)
+                .shadow(color: hover ? C.accent.opacity(0.45) : .clear, radius: 28, y: 12)
+                .scaleEffect(hover ? 1.06 : 1, anchor: .bottom)
+                // Traço azul embaixo do cartão em foco.
+                RoundedRectangle(cornerRadius: 2).fill(C.accent).frame(width: 48, height: 4).opacity(hover ? 1 : 0)
             }
-            .padding(24)
-            .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 240, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(LinearGradient(colors: [tint.opacity(hover ? 0.22 : 0.12), C.widget], startPoint: .topLeading, endPoint: .bottomTrailing))
-            )
-            .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 2 : 1))
-            .scaleEffect(hover ? 1.02 : 1)
-            .animation(.easeOut(duration: 0.15), value: hover)
-            .contentShape(RoundedRectangle(cornerRadius: 20))
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .opacity(enabled ? 1 : 0.4)
+        .zIndex(hover ? 1 : 0)
         .onHover { hover = $0 }
+        .animation(.easeOut(duration: 0.18), value: hover)
     }
 }
 
@@ -149,12 +191,10 @@ private struct ContinueRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Continuar assistindo").font(.system(size: 15, weight: .semibold)).foregroundStyle(C.heading)
-                .padding(.horizontal, 48)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
                     ForEach(vm.recents.prefix(20)) { RecentTile(progress: $0) }
                 }
-                .padding(.horizontal, 48)
                 .padding(.vertical, 6)
             }
         }
@@ -175,7 +215,7 @@ private struct RecentTile: View {
                         ProgressLine(value: Double(progress.position) / Double(max(progress.duration, 1)))
                             .padding(.horizontal, 10).padding(.top, 20).padding(.bottom, 10)
                             .background(LinearGradient(colors: [.clear, .black.opacity(0.85)], startPoint: .top, endPoint: .bottom))
-                            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 12, bottomTrailingRadius: 12))
+                            .clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 6, bottomTrailingRadius: 6))
                     }
                 Text(item.subtitle ?? item.title).font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(hover ? C.heading : C.body).lineLimit(1)
@@ -196,7 +236,7 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TopBar(title: "Configurações", subtitle: "Suas listas IPTV", showBack: vm.current != nil) {
+            TopBar(title: "Configurações", subtitle: "Suas listas IPTV") {
                 Pill(active: true, action: vm.newPlaylist) {
                     Image(systemName: "plus")
                     Text("Adicionar lista")
@@ -215,7 +255,6 @@ struct SettingsView: View {
                 }
             }
         }
-        .background(C.shell)
     }
 }
 
@@ -248,7 +287,7 @@ private struct PlaylistRow: View {
             RowButton(selected: playlist.id == vm.current?.id, action: { vm.open(playlist) }) {
                 HStack(spacing: 14) {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 10).fill(C.widget)
+                        RoundedRectangle(cornerRadius: 6).fill(C.widget)
                         Text(xtreamAccount(playlist.url) != nil ? "XC" : "M3U").font(.tTag).foregroundStyle(C.providerM3u)
                     }
                     .frame(width: 44, height: 44)
@@ -327,7 +366,6 @@ struct FormView: View {
             .padding(.vertical, 36)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(C.shell)
         .onAppear {
             if let p = editing {
                 form = PlaylistForm(name: p.name, url: p.url, epgUrl: p.epgUrl ?? "", userAgent: p.userAgent ?? "", autoUpdate: p.autoUpdate)

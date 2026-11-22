@@ -38,15 +38,23 @@ struct RootView: View {
     @Environment(AppModel.self) private var vm
 
     var body: some View {
-        Group {
-            switch vm.screen {
-            case .hub: HubView()
-            case .settings: SettingsView()
-            case .form(let editing): FormView(editing: editing)
-            case .section: WatchView()
+        // A barra lateral some só no player (filme/série, retomar) e na TV em tela cheia.
+        let immersive = vm.vodPlayback != nil || vm.resumePrompt != nil || (vm.screen == .section && vm.section == .live && vm.fullscreen)
+        ZStack {
+            GlowBackground()
+            HStack(spacing: 0) {
+                if !immersive { NavRail().zIndex(1) }
+                Group {
+                    switch vm.screen {
+                    case .hub: HubView()
+                    case .settings: SettingsView()
+                    case .form(let editing): FormView(editing: editing)
+                    case .section: WatchView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .background(C.shell)
         .ignoresSafeArea(edges: .top)
     }
 }

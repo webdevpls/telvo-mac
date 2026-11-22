@@ -58,7 +58,7 @@ struct SectionLabel: View {
 /// selecionada e realce no hover do mouse.
 struct RowButton<Content: View>: View {
     var selected = false
-    var radius: CGFloat = 12
+    var radius: CGFloat = 6
     let action: () -> Void
     @ViewBuilder let content: () -> Content
     @State private var hover = false
@@ -96,13 +96,13 @@ struct Pill<Content: View>: View {
                 .lineLimit(1)
                 .padding(.horizontal, horizontalPadding)
                 .frame(height: 30)
-                .contentShape(Capsule())
+                .contentShape(RoundedRectangle(cornerRadius: 5))
         }
         .buttonStyle(.plain)
         .disabled(!enabled)
         .foregroundStyle(!enabled ? C.muted : active ? C.selection : (hover ? C.heading : C.body))
-        .background(Capsule().fill(!enabled ? C.widgetHeader.opacity(0.5) : active ? C.selectionSurface : (hover ? C.cardHover : C.widgetHeader)))
-        .overlay(Capsule().strokeBorder(active ? C.selectionBorder : C.separator, lineWidth: 1))
+        .background(RoundedRectangle(cornerRadius: 5).fill(!enabled ? C.widgetHeader.opacity(0.5) : active ? C.selectionSurface : (hover ? C.cardHover : C.widgetHeader)))
+        .overlay(RoundedRectangle(cornerRadius: 5).strokeBorder(active ? C.selectionBorder : C.separator, lineWidth: 1))
         .onHover { hover = $0 }
     }
 }
@@ -118,6 +118,7 @@ struct SearchField: View {
     let placeholder: String
     @Binding var text: String
     var icon = true
+    var focusTrigger = 0
     var onSubmit: () -> Void = {}
     @FocusState private var focused: Bool
 
@@ -137,8 +138,10 @@ struct SearchField: View {
         }
         .padding(.horizontal, 12)
         .frame(height: 34)
-        .background(RoundedRectangle(cornerRadius: 10).fill(C.searchBg))
-        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(focused ? C.focusRing : C.searchBorder, lineWidth: focused ? 2 : 1))
+        .background(RoundedRectangle(cornerRadius: 6).fill(C.searchBg))
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(focused ? C.focusRing : C.searchBorder, lineWidth: focused ? 2 : 1))
+        .onChange(of: focusTrigger) { _, _ in focused = true }
+        .onAppear { if focusTrigger > 0 { focused = true } }
     }
 }
 
@@ -222,7 +225,7 @@ struct ChannelLogo: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10).fill(C.widget)
+            RoundedRectangle(cornerRadius: 6).fill(C.widget)
             if channel.logo != nil {
                 RemoteImage(url: channel.logo).padding(6)
             } else {
@@ -242,23 +245,23 @@ struct PosterView: View {
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 12).fill(C.widget)
+            RoundedRectangle(cornerRadius: 6).fill(C.widget)
             Text(title).font(.system(size: 12)).foregroundStyle(C.muted).multilineTextAlignment(.center).padding(12)
             RemoteImage(url: poster, fill: true)
         }
         .aspectRatio(2 / 3, contentMode: .fit)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay(alignment: .topTrailing) {
             if let rating {
                 Text("★ \(rating)")
                     .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(C.star)
                     .padding(.horizontal, 7).padding(.vertical, 3)
-                    .background(Capsule().fill(Color.black.opacity(0.8)))
+                    .background(RoundedRectangle(cornerRadius: 5).fill(Color.black.opacity(0.8)))
                     .padding(6)
             }
         }
-        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 3 : 1))
+        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(hover ? C.focusRing : C.separator, lineWidth: hover ? 3 : 1))
         .scaleEffect(hover ? 1.04 : 1)
         .animation(.easeOut(duration: 0.15), value: hover)
     }

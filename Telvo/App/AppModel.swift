@@ -73,6 +73,8 @@ final class AppModel {
     private(set) var playing: Channel?
     private(set) var playingNumber = 0
     var fullscreen = false
+    /// Incrementado pela lupa da barra lateral: o campo de busca da TV pega o foco.
+    var searchRequest = 0
     var showEpg = true
     private(set) var now = nowMs()
 
